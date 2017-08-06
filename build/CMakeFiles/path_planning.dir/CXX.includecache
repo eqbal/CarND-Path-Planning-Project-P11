@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Car.h
+vector
+-
+iostream
+-
+math.h
+-
+
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/Cholesky
 Core
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/Core
@@ -390,6 +398,32 @@ src/Jacobi/Jacobi.h
 src/Core/util/ReenableStupidWarnings.h
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/Core/util/ReenableStupidWarnings.h
 
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/LU
+Core
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/Core
+src/Core/util/DisableStupidWarnings.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/Core/util/DisableStupidWarnings.h
+src/misc/Kernel.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/misc/Kernel.h
+src/misc/Image.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/misc/Image.h
+src/LU/FullPivLU.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/FullPivLU.h
+src/LU/PartialPivLU.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/PartialPivLU.h
+src/misc/lapacke.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/misc/lapacke.h
+src/LU/PartialPivLU_LAPACKE.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/PartialPivLU_LAPACKE.h
+src/LU/Determinant.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/Determinant.h
+src/LU/InverseImpl.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/InverseImpl.h
+src/LU/arch/Inverse_SSE.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/arch/Inverse_SSE.h
+src/Core/util/ReenableStupidWarnings.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/Core/util/ReenableStupidWarnings.h
+
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/QR
 Core
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/Core
@@ -730,6 +764,18 @@ cstdint
 
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/Jacobi/Jacobi.h
 
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/Determinant.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/FullPivLU.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/InverseImpl.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/PartialPivLU.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/PartialPivLU_LAPACKE.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/LU/arch/Inverse_SSE.h
+
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/QR/ColPivHouseholderQR.h
 
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h
@@ -741,6 +787,10 @@ cstdint
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/QR/HouseholderQR.h
 
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/QR/HouseholderQR_LAPACKE.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/misc/Image.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/misc/Kernel.h
 
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/misc/blas.h
 
@@ -771,6 +821,38 @@ lapacke_mangling.h
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
 
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Polynomial.h
+vector
+-
+iostream
+-
+math.h
+-
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/TrajectoryGenerator.h
+iostream
+-
+vector
+-
+map
+-
+string
+-
+math.h
+-
+Eigen-3.3/Eigen/Core
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/Core
+Eigen-3.3/Eigen/QR
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/QR
+Eigen-3.3/Eigen/LU
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/LU
+random
+-
+Polynomial.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Polynomial.h
+Car.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Car.h
 
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/json.hpp
 algorithm
@@ -849,6 +931,24 @@ Eigen-3.3/Eigen/QR
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Eigen-3.3/Eigen/QR
 json.hpp
 /Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/json.hpp
+TrajectoryGenerator.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/TrajectoryGenerator.h
+Car.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/Car.h
+spline.h
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/spline.h
+cassert
+-
+
+/Users/eqbal/code/udacity/CarND-Path-Planning-Project/src/spline.h
+cstdio
+-
+cassert
+-
+vector
+-
+algorithm
+-
 
 /usr/local/include/pthread-barrier.h
 errno.h

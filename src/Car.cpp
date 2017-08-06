@@ -9,7 +9,7 @@ Car::Car() {
   _acc_d = 0.0;
 }
 
-Car::Car(const Vehicle& orig) {
+Car::Car(const Car& orig) {
 }
 
 Car::~Car() {

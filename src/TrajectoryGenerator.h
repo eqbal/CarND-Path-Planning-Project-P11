@@ -1,5 +1,5 @@
-#ifndef POLYTRAJECTORYGENERATOR_H
-#define POLYTRAJECTORYGENERATOR_H
+#ifndef TRAJECTORYGENERATOR_H
+#define TRAJECTORYGENERATOR_H
 
 #include <iostream>
 #include <vector>
@@ -20,24 +20,24 @@ class TrajectoryGenerator {
     TrajectoryGenerator();
     ~TrajectoryGenerator();
 
-    vector<vector<double>> generate_trajectory(vector<double> const &start, double max_speed, double horizon, vector<Vehicle> const &vehicles);
+    vector<vector<double>> generate_trajectory(vector<double> const &start, double max_speed, double horizon, vector<Car> const &vehicles);
     Polynomial jmt(vector<double> const &start, vector<double> const &goal, int t);
     void perturb_goal(vector<double> goal, vector<vector<double>> &goal_points, bool no_ahead=false);
     double logistic(double x);
-    int closest_vehicle_in_lane(vector<double> const &start, int ego_lane_i, vector<Vehicle> const &vehicles);
-    vector<int> closest_vehicle_in_lanes(vector<double> const &start, vector<Vehicle> const &vehicles);
-    double calculate_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles, vector<vector<double>> &all_costs);
-    double exceeds_speed_limit_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double exceeds_accel_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double exceeds_jerk_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double collision_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double traffic_buffer_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double efficiency_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double total_accel_d_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double total_accel_s_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double total_jerk_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double lane_depart_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
-    double traffic_ahead_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Vehicle> const &vehicles);
+    int closest_vehicle_in_lane(vector<double> const &start, int ego_lane_i, vector<Car> const &vehicles);
+    vector<int> closest_vehicle_in_lanes(vector<double> const &start, vector<Car> const &vehicles);
+    double calculate_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles, vector<vector<double>> &all_costs);
+    double exceeds_speed_limit_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double exceeds_accel_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double exceeds_jerk_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double collision_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double traffic_buffer_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double efficiency_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double total_accel_d_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double total_accel_s_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double total_jerk_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double lane_depart_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
+    double traffic_ahead_cost(pair<Polynomial, Polynomial> const &traj, vector<double> const &goal, vector<Car> const &vehicles);
     string get_current_action();
 
   private:

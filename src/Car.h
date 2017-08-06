@@ -13,7 +13,7 @@ class Car {
     Car();
     Car(const Car& orig);
 
-    virtual ~Vehicle();
+    virtual ~Car();
 
     void set_frenet_pos(double pos_s, double pos_d);
     void set_frenet_motion(double vel_s, double acc_s, double vel_d, double acc_d);
