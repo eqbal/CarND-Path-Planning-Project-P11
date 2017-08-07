@@ -39,7 +39,7 @@ vector<double> Car::get_d() const {
 // simplified assumption in line with project constraints
 // - vehicle stays in lane
 // - vehicle has constant speed
-vector<double> Vehicle::state_at(double t) const {
+vector<double> Car::state_at(double t) const {
   double new_s = _pos_s + t * _vel_s;
   return {new_s, _pos_d};
 }
