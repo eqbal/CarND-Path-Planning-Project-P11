@@ -1,7 +1,28 @@
-# CarND-Path-Planning-Project
+# Motion Path Planning
+## Highway Driving
 Self-Driving Car Engineer Nanodegree Program
-   
-### Simulator.
+
+### Overview 
+
+The goal of this project is to implement a path planning system which can safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit.
+
+Path planning is an interesting problem. In essence, it’s the process of finding a safe, comfortable and efficient (in that order) path through a set of dynamic maneuverable objects to reach our goal.
+
+Usually, if we want to find a route between a source and a destination, and we want to find the fastest / shortest path, there are tons of algorithms to do this: (ex: `Dijkstra’s`, `Breadth First Search`, `A*`, etc…).
+
+However in a road scene, whether it be a highway or urban roads, one of the most important difference is that the scene is not static, so our planning needs to be a dynamic one too.
+
+Note we need to track the other objects with Sensor Fusion(dynamic such as other cars, pedestrians, bikes, etc…., and static such as trees, curbs, lamp posts).
+
+The planning algorithm makes use of States and Jerk Minimized Trajectories in Frenet space.
+
+
+### Data
+### Structure
+### Flow
+
+  
+### Simulator
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
 
 ### Goals
