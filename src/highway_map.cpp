@@ -42,7 +42,7 @@ size_t HighwayMap::closestIndex(double x, double y) const {
     return i_closest;
 }
 
-size_t HighwayMap::closestIndex(const State &state) const {
+size_t HighwayMap::closestIndex(const Car &state) const {
     return closestIndex(state.x, state.y);
 }
 

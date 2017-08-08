@@ -27,7 +27,7 @@ struct HighwayMap {
     /**
      *  Return the index of the lane closest to the given state.
      */
-    size_t closestIndex(const State &state) const;
+    size_t closestIndex(const Car &state) const;
 
     /**
      *  Return the index of the lane closest to the given point.

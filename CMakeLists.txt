@@ -4,10 +4,12 @@ cmake_minimum_required (VERSION 3.5)
 
 add_definitions(-std=c++11)
 
-set(CXX_FLAGS "-Wall")
-set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
+set(CXX_FLAGS "-Wall -DHAVE_CSTDDEF -O2 -march=native")
+set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-set(sources src/main.cpp src/TrajectoryGenerator.cpp src/Polynomial.cpp src/Car.cpp)
+include_directories(
+    "src/Eigen-3.3"
+)
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -21,6 +23,16 @@ link_directories(/usr/local/Cellar/libuv/1.11.0/lib)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 
-add_executable(path_planning ${sources})
+add_executable(path_planning
+    "src/behavior_planner.cpp"
+    "src/highway_map.cpp"
+    "src/lane.cpp"
+    "src/main.cpp"
+    "src/planner.cpp"
+    "src/obstacles.cpp"
+    "src/path_planner.cpp"
+    "src/car.cpp"
+    "src/waypoints.cpp"
+)
 
-target_link_libraries(path_planning z ssl uv uWS)
+target_link_libraries(path_planning ipopt z ssl uv uWS)

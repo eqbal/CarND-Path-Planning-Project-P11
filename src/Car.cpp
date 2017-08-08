@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-Car::State():
+Car::Car():
     x(0),
     y(0),
     o(0),

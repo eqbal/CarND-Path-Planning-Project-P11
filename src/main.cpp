@@ -1,4 +1,4 @@
-#include "navigator.h"
+#include "planner.h"
 
 #include <fstream>
 #include <math.h>
@@ -35,11 +35,11 @@ int main() {
 
     uWS::Hub h;
 
-    Navigator navigator;
+    Planner planner;
 
     std::ifstream map_file("../data/highway_map.csv");
 
-    map_file >> navigator.behavior.highway;
+    map_file >> planner.behavior.highway;
 
     auto handler = [&](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -64,7 +64,7 @@ int main() {
             return;
         }
 
-        const Waypoints &route = navigator(j[1]);
+        const Waypoints &route = planner(j[1]);
 
         json msgJson;
         msgJson["next_x"] = route.x;

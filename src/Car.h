@@ -26,7 +26,7 @@ struct Car {
     /**
      *  Default constructor.
      */
-    State();
+    Car();
 
     /**
      *  Update this state with data from the given route and JSON node.
