@@ -146,7 +146,6 @@ the path has processed since last time.
 
 A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
 
----
 
 ## Dependencies
 
@@ -164,10 +163,21 @@ A really helpful resource for doing this project and creating smooth trajectorie
   * Run either `install-mac.sh` or `install-ubuntu.sh`.
   * If you install from source, checkout to commit `e94b6e1`, i.e.
     ```
-    git clone https://github.com/uWebSockets/uWebSockets 
+    git clone https://github.com/uWebSockets/uWebSockets
     cd uWebSockets
     git checkout e94b6e1
-    ```
+* [Ipopt](https://projects.coin-or.org/Ipopt)
+  * Mac: `brew install ipopt --with-openblas`
+  * Linux
+    * You will need a version of Ipopt 3.12.1 or higher. The version available through `apt-get` is 3.11.x. If you can get that version to work great but if not there's a script `install_ipopt.sh` that will install Ipopt. You just need to download the source from the Ipopt [releases page](https://www.coin-or.org/download/source/Ipopt/) or the [Github releases](https://github.com/coin-or/Ipopt/releases) page.
+    * Then call `install_ipopt.sh` with the source directory as the first argument, ex: `bash install_ipopt.sh Ipopt-3.12.1`.
+  * Windows: TODO. If you can use the Linux subsystem and follow the Linux instructions.
+* [CppAD](https://www.coin-or.org/CppAD/)
+  * Mac: `brew install cppad`
+  * Linux `sudo apt-get install cppad` or equivalent.
+  * Windows: TODO. If you can use the Linux subsystem and follow the Linux instructions.
+* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page). This is already part of the repo so you shouldn't have to worry about it.
+* Simulator. Find the latest version [here](https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
 
 ## Editor Settings
 

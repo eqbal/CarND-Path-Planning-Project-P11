@@ -8,10 +8,10 @@
 #define W_LANE 4.0
 
 /** @brief Number of planned waypoints. */
-#define N_PLAN 50
+#define N_PLAN 30
 
 /** @brief Number of planned waypoints to keep between updates. */
-#define N_KEEP 20
+#define N_KEEP 10
 
 /** @brief Time gap between waypoints. */
 #define T_PLAN 0.02
