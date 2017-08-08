@@ -58,9 +58,19 @@ Check out the plot below which represent data in `X/Y` coordinates taken from `h
 
 - The car uses a perfect controller and will visit every (x,y) point it receives in a list every .02 seconds.
 
-### Flow
+### System Architecture & Flow
 
-This project implements a Navigator (composed of a Behavior Planner and a Path Planner) to create smooth, safe paths for an autonomous car to drive along. It communicates with Udacity's simulator through a WebSocket interface, receiving as input the car state, obstacle data (i.e. data on other vehicles) and current path plan, and sending back a new sequence of waypoints describing the updated path plan. The diagram below summarizes the system architecture:
+This project implements a `Planner` (composed of a `Behavior Planner` and a `Path Planner`) to create smooth, safe paths for an autonomous car to drive along.
+
+It communicates with Udacity's simulator through a WebSocket interface, receiving as input:
+
+- Car state
+- Obstacle data
+- Current path plan
+
+And sending back a new sequence of waypoints describing the updated path plan. The diagram below summarizes the system architecture:
+
+![](./assets/flow.png)
 
 ### FSM
 
