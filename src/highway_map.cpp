@@ -1,5 +1,7 @@
 #include "highway_map.h"
 
+#include "settings.h"
+
 #include <cmath>
 #include <limits>
 #include <tuple>
@@ -7,6 +9,7 @@
 HighwayMap::HighwayMap():
     lanes(N_LANES, Lane(W_LANE))
 {
+    // Nothing to do.
 }
 
 std::vector<size_t> HighwayMap::adjacentLanes(size_t lane) const {

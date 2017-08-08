@@ -1,5 +1,5 @@
-#ifndef STATE_H
-#define STATE_H
+#ifndef CAR_H
+#define CAR_H
 
 #include "waypoints.h"
 
@@ -7,7 +7,7 @@
 
 struct HighwayMap;
 
-struct State {
+struct Car {
     /** Current position in Cartesian coordinates. */
     double x, y;
 
@@ -17,10 +17,10 @@ struct State {
     /** Current position in Frenet coordinates. */
     double s, d;
 
-    /**  Current linear speed. */
+    /** Current linear speed. */
     double v;
 
-    /**  Current lane. */
+    /** Current lane. */
     size_t lane;
 
     /**
