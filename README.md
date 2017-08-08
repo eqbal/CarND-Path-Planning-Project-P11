@@ -18,8 +18,23 @@ The planning algorithm makes use of States and Jerk Minimized Trajectories in Fr
 
 
 ### Data
+
+We should design a path planner for a ~`6.5km` long track goes in a circle and is filled by a random vehicles. Each vehicle travels at a random speed and avoids collisions with slower traffic by reducing speed or changing lanes.
+
+Provided are waypoints along the track as well as synthetic localization and sensor fusion data sent from the simulator
+
+In `./data` folder we can find `highway_map.csv` file which includes data in `X/Y` format world space coordinates as well as Frenet S/D. 
+
+Sensor fusion data contains position and velocity information of the twelve closest vehicles in travel direction.
+
+Check out the plot below which represent data in `X/Y` coordinates taken from `highway_map.csv`:
+![](./assets/waypoints.png)
+
 ### Structure
 ### Flow
+
+### Notes
+- The car uses a perfect controller and will visit every (x,y) point it receives in a list every .02 seconds.
 
   
 ### Simulator
