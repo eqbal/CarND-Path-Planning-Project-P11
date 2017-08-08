@@ -19,11 +19,6 @@ using namespace std;
 // for convenience
 using json = nlohmann::json;
 
-// For converting back and forth between radians and degrees.
-constexpr double pi() { return M_PI; }
-double deg2rad(double x) { return x * pi() / 180; }
-double rad2deg(double x) { return x * 180 / pi(); }
-
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
@@ -37,32 +32,6 @@ string hasData(string s) {
     return s.substr(b1, b2 - b1 + 2);
   }
   return "";
-}
-
-double distance(double x1, double y1, double x2, double y2)
-{
-  return sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-}
-int ClosestWaypoint(double x, double y, vector<double> maps_x, vector<double> maps_y)
-{
-  double closestLen = 100000; //large number
-  int closestWaypoint = 0;
-
-  for(int i = 0; i < maps_x.size(); i++)
-  {
-    double map_x = maps_x[i];
-    double map_y = maps_y[i];
-    double dist = distance(x,y,map_x,map_y);
-    if(dist < closestLen)
-    {
-      closestLen = dist;
-      closestWaypoint = i;
-    }
-
-  }
-
-  return closestWaypoint;
-
 }
 
 // Transform from Frenet s,d coordinates to Cartesian x,y
@@ -173,9 +142,10 @@ double get_local_s(double world_s, vector<double> const &waypoints_segment_s_wor
 }
 
 int main() {
+
   uWS::Hub h;
 
-  TrajectoryGenerator PTG;
+  TrajectoryGenerator trajectory_generator;
 
   // Load up map values for waypoint's x,y,s and d normalized normal vectors
   vector<double> map_waypoints_x;
@@ -188,6 +158,11 @@ int main() {
   string map_file_ = "../data/highway_map.csv";
   // The max s value before wrapping around the track back to 0
   double max_s = 6945.554;
+  int horizon_global = 175;
+  int horizon = horizon_global;
+  int update_interval_global = 40; // update every second
+  int update_interval = update_interval_global;
+  double speed_limit_global = 47.5;
 
   ifstream in_map_(map_file_.c_str(), ifstream::in);
 
@@ -214,15 +189,10 @@ int main() {
   // Create object for ego vehicle;
   Car my_car;
 
-  int horizon_global = 175; //200
-  int horizon = horizon_global;
-  int update_interval_global = 40; // update every second
-  int update_interval = update_interval_global;
-  double speed_limit_global = 47.5;
 
 
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,
-      &map_waypoints_dy,&PTG,&my_car,&horizon,&horizon_global,&update_interval_global,&update_interval,&speed_limit_global]
+      &map_waypoints_dy,&trajectory_generator,&my_car,&horizon,&horizon_global,&update_interval_global,&update_interval,&speed_limit_global]
       (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,uWS::OpCode opCode) {
       // "42" at the start of the message means there's a websocket message event.
       // The 4 signifies a websocket message
@@ -362,13 +332,13 @@ int main() {
         double est_car_d_acc = my_car._future_states[lag][3];
         vector<double> car_state = {car_local_s, est_car_s_vel, est_car_s_acc, car_d, est_car_d_vel, est_car_d_acc};
 
-        vector<vector<double>> new_path = PTG.generate_trajectory(car_state, speed_limit, horizon, envir_vehicles);
+        vector<vector<double>> new_path = trajectory_generator.generate_trajectory(car_state, speed_limit, horizon, envir_vehicles);
         update_interval = update_interval_global;
         horizon = horizon_global;
-        if (PTG.get_current_action() == "lane_change") {
+        if (trajectory_generator.get_current_action() == "lane_change") {
           cout << "LANE CHANGE" << endl;
           update_interval = horizon - 50;
-        } else if (PTG.get_current_action() == "lane_change") {
+        } else if (trajectory_generator.get_current_action() == "lane_change") {
           cout << "EMERGENCY" << endl;
           horizon = 120;
           update_interval = horizon - 80;
