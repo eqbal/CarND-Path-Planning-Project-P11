@@ -58,6 +58,8 @@ Check out the plot below which represent data in `X/Y` coordinates taken from `h
 
 - The car uses a perfect controller and will visit every (x,y) point it receives in a list every .02 seconds.
 
+- In reality dealing with the entire world at once is not practical. Instead, I am generating a local space from the closest `30` waypoints. 
+
 ### System Architecture & Flow
 
 This project implements a `Planner` (composed of a `Behavior Planner` and a `Path Planner`) to create smooth, safe paths for an autonomous car to drive along.
@@ -80,9 +82,11 @@ The system has the following states:
 
 - `TAILING` state where it will try to pair its speed to the cars, while watching for an opportunity to change lanes. When this comes the FSM selects a destination lane and switches to `CHANGING_LANES` state, returning to `CRUISING` state once the movement is complete.
 
-Once the current behavior (composed of a reference speed `v` and a polynomial route roughly indicating whether to keep or change lanes) is determined, it's dispatched along the current State to the `PathPlanner`. It in turn uses the `CppAD` interface to `Ipopt` to compute a sequence of waypoints approaching the route at the reference speed, while respecting acceleration limits.
+Once the current behavior (composed of a reference speed `v` and a polynomial route roughly indicating whether to keep or change lanes) is determined, it's dispatched along the current State to the `PathPlanner`. 
 
-  
+I used the `CppAD` interface to `Ipopt` to compute a sequence of waypoints approaching the route at the reference speed, while respecting acceleration limits.
+
+
 ### Simulator
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
 
