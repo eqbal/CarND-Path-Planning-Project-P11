@@ -2,6 +2,8 @@
 ## Highway Driving
 Self-Driving Car Engineer Nanodegree Program
 
+By: [Eqbal Eki](http://www.eqbalq.com)
+
 ### Overview 
 
 The goal of this project is to implement a path planning system which can safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit.
@@ -31,10 +33,40 @@ Check out the plot below which represent data in `X/Y` coordinates taken from `h
 ![](./assets/waypoints.png)
 
 ### Structure
-### Flow
+
+- `Planner` class which encapsulates instances of `BehaviorPlanner` and `PathPlanner`. 
+
+- `BehaviorPlanner` class which works with `Planner` to decode the WebSocket inputs to collect the current path plan, composed of a sequence of waypoints in global Cartesian coordinates `(x, y)`.
+
+- `Car` class which has the current car State, composed of global Cartesian coordinates `(x, y)`, orientation `o`, Frenet coordinates `(s, d)`, speed `v` and current lane `index`.
+
+- `Obstacles` class that containing the Cartesian and Frenet coordinates, speeds and lane index of all vehicles on the same side of the road as the car. 
+
+- `HighwayMap` class is used to keep track of all vehicles along the highway. 
 
 ### Notes
+
+- Updated path plans are sent back to the simulator through the `WebSocket` interface.
+
+- Because the Path Planner must react quickly to changing road conditions, the plan covers a period of only `0.3`s.
+
+- Each turn the first 0.1s worth of waypoints from the current path plan is kept, and a new plan is constructed from the last kept waypoint onwards.
+
+- The first step of the planning process is to update `Car` and `Obstacles` objects to reflect expected conditions 0.1s into the future.
+
+- The `BehaviorPlanner` then updates its internal Finite State Machine (`FSM`) according to predicted readings and its own rules (illustrated in `FSM` section)
+
 - The car uses a perfect controller and will visit every (x,y) point it receives in a list every .02 seconds.
+
+### Flow
+
+This project implements a Navigator (composed of a Behavior Planner and a Path Planner) to create smooth, safe paths for an autonomous car to drive along. It communicates with Udacity's simulator through a WebSocket interface, receiving as input the car state, obstacle data (i.e. data on other vehicles) and current path plan, and sending back a new sequence of waypoints describing the updated path plan. The diagram below summarizes the system architecture:
+
+### FSM
+
+The FSM starts at the START state, which determines the initial lane and the switches into the CRUISING state. In this state the car moves at the reference speed of 20m/s (close to 44MPH); it also tries to keep the car on the middle lane, from where it can more easily move to avoid slower cars. If it finds a slower car ahead, it initially switches to the TAILING state where it will try to pair its speed to them, while watching for an opportunity to change lanes. When this comes the FSM selects a destination lane and switches to CHANGING_LANES state, returning to CRUISING state once the movement is complete.
+
+Once the current behavior (composed of a reference speed v and a polynomial route roughly indicating whether to keep or change lanes) is determined, it's dispatched along the current State to the PathPlanner. It in turn uses the CppAD interface to Ipopt to compute a sequence of waypoints approaching the route at the reference speed, while respecting acceleration limits.
 
   
 ### Simulator
