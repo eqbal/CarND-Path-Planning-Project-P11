@@ -65,75 +65,6 @@ int ClosestWaypoint(double x, double y, vector<double> maps_x, vector<double> ma
 
 }
 
-int NextWaypoint(double x, double y, double theta, vector<double> maps_x, vector<double> maps_y)
-{
-  int closestWaypoint = ClosestWaypoint(x,y,maps_x,maps_y);
-
-  double map_x = maps_x[closestWaypoint];
-  double map_y = maps_y[closestWaypoint];
-
-  double heading = atan2( (map_y-y),(map_x-x) );
-
-  double angle = abs(theta-heading);
-
-  if(angle > pi()/4)
-  {
-    closestWaypoint++;
-  }
-
-  return closestWaypoint;
-
-}
-
-// Transform from Cartesian x,y coordinates to Frenet s,d coordinates
-vector<double> getFrenet(double x, double y, double theta, vector<double> const &maps_x, vector<double> const &maps_y)
-{
-  int next_wp = NextWaypoint(x,y, theta, maps_x,maps_y);
-
-  int prev_wp;
-  prev_wp = next_wp-1;
-  if(next_wp == 0)
-  {
-    prev_wp  = maps_x.size()-1;
-  }
-
-  double n_x = maps_x[next_wp]-maps_x[prev_wp];
-  double n_y = maps_y[next_wp]-maps_y[prev_wp];
-  double x_x = x - maps_x[prev_wp];
-  double x_y = y - maps_y[prev_wp];
-
-  // find the projection of x onto n
-  double proj_norm = (x_x*n_x+x_y*n_y)/(n_x*n_x+n_y*n_y);
-  double proj_x = proj_norm*n_x;
-  double proj_y = proj_norm*n_y;
-
-  double frenet_d = distance(x_x,x_y,proj_x,proj_y);
-
-  //see if d value is positive or negative by comparing it to a center point
-
-  double center_x = 1000-maps_x[prev_wp];
-  double center_y = 2000-maps_y[prev_wp];
-  double centerToPos = distance(center_x,center_y,x_x,x_y);
-  double centerToRef = distance(center_x,center_y,proj_x,proj_y);
-
-  if(centerToPos <= centerToRef)
-  {
-    frenet_d *= -1;
-  }
-
-  // calculate s value
-  double frenet_s = 0;
-  for(int i = 0; i < prev_wp; i++)
-  {
-    frenet_s += distance(maps_x[i],maps_y[i],maps_x[i+1],maps_y[i+1]);
-  }
-
-  frenet_s += distance(0,0,proj_x,proj_y);
-
-  return {frenet_s,frenet_d};
-
-}
-
 // Transform from Frenet s,d coordinates to Cartesian x,y
 // in particular, uses splines instead of an estimated angle to project out into d, making the results much smoother
 vector<double> getXY_splines(double s, double d, tk::spline const &spline_fit_s_to_x, tk::spline const &spline_fit_s_to_y, tk::spline const &spline_fit_s_to_dx, tk::spline const &spline_fit_s_to_dy) {
@@ -280,12 +211,9 @@ int main() {
     map_waypoints_dy.push_back(d_y);
   }
 
-  // create object for ego vehicle;
-  Car ego_veh;
+  // Create object for ego vehicle;
+  Car my_car;
 
-  // #################################
-  // CONFIG
-  // #################################
   int horizon_global = 175; //200
   int horizon = horizon_global;
   int update_interval_global = 40; // update every second
@@ -294,7 +222,7 @@ int main() {
 
 
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,
-      &map_waypoints_dy,&PTG,&ego_veh,&horizon,&horizon_global,&update_interval_global,&update_interval,&speed_limit_global]
+      &map_waypoints_dy,&PTG,&my_car,&horizon,&horizon_global,&update_interval_global,&update_interval,&speed_limit_global]
       (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,uWS::OpCode opCode) {
       // "42" at the start of the message means there's a websocket message event.
       // The 4 signifies a websocket message
@@ -321,12 +249,13 @@ int main() {
       double car_speed = j[1]["speed"];
 
       // update actual position
-      ego_veh.set_frenet_pos(car_s, car_d);
+      my_car.set_frenet_pos(car_s, car_d);
 
       // Previous path data given to the Planner
       vector<double> previous_path_x = j[1]["previous_path_x"];
       vector<double> previous_path_y = j[1]["previous_path_y"];
       int prev_path_size = previous_path_x.size();
+
       // Previous path's end s and d values
       double end_path_s = j[1]["end_path_s"];
       double end_path_d = j[1]["end_path_d"];
@@ -341,41 +270,36 @@ int main() {
 
       double speed_limit = speed_limit_global;
 
-      // ###################################################
-      // PATH PLANNING
-      // ###################################################
       bool smooth_path = previous_path_x.size() > 0;
 
       if (previous_path_x.size() < horizon - update_interval) {
-        cout << endl;
-        cout << "PATH UPDATE" << endl;
-        cout << "prev path size: " <<  previous_path_x.size() << " : " << horizon << endl;
 
-        // #################################################################
-        // EXTRACT SURROUNDING WAYPOINTS AND FIT A SPLINE
-        // #################################################################
+        // Extract surrounding waypoints and fit a spline
         vector<double> waypoints_segment_s;
         vector<double> waypoints_segment_s_worldSpace;
-        // TODO: Clean most (all?) of these up! Change signature of fit_spline_segment as well.
+
         tk::spline spline_fit_s_to_x;
         tk::spline spline_fit_s_to_y;
         tk::spline spline_fit_s_to_dx;
         tk::spline spline_fit_s_to_dy;
-        fit_spline_segment(car_s, map_waypoints_s, map_waypoints_x, map_waypoints_y, map_waypoints_dx, map_waypoints_dy, waypoints_segment_s, waypoints_segment_s_worldSpace, spline_fit_s_to_x, spline_fit_s_to_y, spline_fit_s_to_dx, spline_fit_s_to_dy);
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        // END - EXTRACT SURROUNDING WAYPOINTS AND FIT A SPLINE
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-        // #################################################################
-        // CREATE LOCAL FRENET SPACE
-        // #################################################################
-        // convert current car_s into our local Frenet space
+        fit_spline_segment(
+            car_s, map_waypoints_s, map_waypoints_x, map_waypoints_y,
+            map_waypoints_dx, map_waypoints_dy, waypoints_segment_s,
+            waypoints_segment_s_worldSpace, spline_fit_s_to_x,
+            spline_fit_s_to_y, spline_fit_s_to_dx, spline_fit_s_to_dy);
+
+        // Create local frenet space
+
+        // Convert current car_s into our local Frenet space
         double car_local_s = get_local_s(car_s, waypoints_segment_s_worldSpace, waypoints_segment_s);
-        // convert sensor fusion data into local Frenet space
+
+        // Convert sensor fusion data into local Frenet space
         for (int i = 0; i < sensor_fusion.size(); i++) {
           sensor_fusion[i][5] = get_local_s(sensor_fusion[i][5], waypoints_segment_s_worldSpace, waypoints_segment_s);
         }
-        // turn sensor fusion data into Vehicle objects
+
+        // Turn sensor fusion data into Car objects
         vector<Car> envir_vehicles(sensor_fusion.size());
         for (int i = 0; i < sensor_fusion.size(); i++) {
           envir_vehicles[i].set_frenet_pos(sensor_fusion[i][5], sensor_fusion[i][6]);
@@ -384,10 +308,6 @@ int main() {
           double velocity_per_timestep = sqrt(pow(vx, 2) + pow(vy, 2)) / 50.0;
           envir_vehicles[i].set_frenet_motion(velocity_per_timestep, 0.0, 0.0, 0.0);
         }
-
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        // END - CREATE LOCAL FRENET SPACE
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         // #################################################################
         // HACK: dealing with undesirably high speeds in tight left turns
@@ -421,7 +341,6 @@ int main() {
             speed_limit *= scale_factor;
           }
         }
-        cout << "dx dif: " << dx_dif << " dy dif: " << dy_dif << " corrected speed limit: " << speed_limit << endl;
         // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         // END HACK
         // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -433,14 +352,14 @@ int main() {
         int lag = horizon - update_interval - previous_path_x.size();
         if (lag > 10) lag = 0; // sim start
         // get last known car state
-        //            vector<double> prev_car_s = ego_veh.get_s();
-        //            vector<double> prev_car_d = ego_veh.get_d();
+        //            vector<double> prev_car_s = my_car.get_s();
+        //            vector<double> prev_car_d = my_car.get_d();
         // collect best guess at current car state. S position in local segment space
         cout << "lag: " << lag << endl;
-        double est_car_s_vel = ego_veh._future_states[lag][0];
-        double est_car_s_acc = ego_veh._future_states[lag][1];
-        double est_car_d_vel = ego_veh._future_states[lag][2];
-        double est_car_d_acc = ego_veh._future_states[lag][3];
+        double est_car_s_vel = my_car._future_states[lag][0];
+        double est_car_s_acc = my_car._future_states[lag][1];
+        double est_car_d_vel = my_car._future_states[lag][2];
+        double est_car_d_acc = my_car._future_states[lag][3];
         vector<double> car_state = {car_local_s, est_car_s_vel, est_car_s_acc, car_d, est_car_d_vel, est_car_d_acc};
 
         vector<vector<double>> new_path = PTG.generate_trajectory(car_state, speed_limit, horizon, envir_vehicles);
@@ -472,7 +391,7 @@ int main() {
           double d_v1 = d1 - d0;
           double d_v2 = d2 - d1;
           double d_a = d_v2 - d_v1;
-          ego_veh._future_states[i] = {s_v1, s_a, d_v1, d_a};
+          my_car._future_states[i] = {s_v1, s_a, d_v1, d_a};
         }
         // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         // END - store ego vehicle velocity and acceleration in s and d for next cycle
