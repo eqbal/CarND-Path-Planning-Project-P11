@@ -1,40 +1,47 @@
-#ifndef CAR_H
-#define CAR_H
+#ifndef STATE_H
+#define STATE_H
 
-#include <vector>
-#include <iostream>
-#include <math.h>
+#include "waypoints.h"
 
-using namespace std;
+#include "json.hpp"
 
-class Car {
-  public:
+struct HighwayMap;
 
-    Car();
-    Car(const Car& orig);
+struct State {
+    /** Current position in Cartesian coordinates. */
+    double x, y;
 
-    virtual ~Car();
+    /** Current orientation in radians. */
+    double o;
 
-    void set_frenet_pos(double pos_s, double pos_d);
-    void set_frenet_motion(double vel_s, double acc_s, double vel_d, double acc_d);
+    /** Current position in Frenet coordinates. */
+    double s, d;
 
-    vector<double> get_s() const;
-    vector<double> get_d() const;
-    vector<double> state_at(double t) const;
+    /**  Current linear speed. */
+    double v;
 
-    // format {s_vel, s_acc, d_vel, d_acc}
-    vector<vector<double>> _future_states = {
-      {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-      {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}
-    };
+    /**  Current lane. */
+    size_t lane;
 
-  private:
-    double _pos_s;
-    double _pos_d;
-    double _vel_s;
-    double _vel_d;
-    double _acc_s;
-    double _acc_d;
+    /**
+     *  Default constructor.
+     */
+    State();
+
+    /**
+     *  Update this state with data from the given route and JSON node.
+     */
+    void update(const HighwayMap &highway, const Waypoints &route, const nlohmann::json &json);
+
+    /**
+     *  Convert the given waypoints to a local frame relative to this state.
+     */
+    void toLocalFrame(Waypoints &waypoints) const;
+
+    /**
+     *  Convert the given waypoints to the global frame using this state as reference.
+     */
+    void toGlobalFrame(Waypoints &waypoints) const;
 };
 
 #endif

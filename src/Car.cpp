@@ -1,45 +1,90 @@
-#include "Car.h"
+#include "car.h"
+#include "highway_map.h"
+#include "settings.h"
 
-Car::Car() {
-  _pos_s = 0.0;
-  _vel_s = 0.0;
-  _acc_s = 0.0;
-  _pos_d = 0.0;
-  _vel_d = 0.0;
-  _acc_d = 0.0;
+#include <cmath>
+
+Car::State():
+    x(0),
+    y(0),
+    o(0),
+    s(0),
+    d(0),
+    v(0)
+{
 }
 
-Car::Car(const Car& orig) {
+void Car::update(const HighwayMap &highway, const Waypoints &route, const nlohmann::json &json) {
+    x = json["x"];
+    y = json["y"];
+    s = json["s"];
+    d = json["d"];
+    o = ((double) json["yaw"]) * M_PI / 180.0; // Convert from degrees to radians
+    v = ((double) json["speed"]) * 0.447; // Convert from MPH to m/s
+
+    size_t n = route.size();
+    if (n == 0) {
+        lane = highway.closestIndex(d);
+        return;
+    }
+
+    // If the route has at least one waypoint, use it to
+    // update the state's position.
+
+    size_t l = n - 1;
+    double x_a = x;
+    double y_a = y;
+    if (l > 0) {
+        x_a = route.x[l - 1];
+        y_a = route.y[l - 1];
+    }
+
+    double x_b = route.x[l];
+    double y_b = route.y[l];
+    double x_d = x_b - x_a;
+    double y_d = y_b - y_a;
+    double e = std::sqrt(x_d * x_d + y_d * y_d);
+
+    x = x_b;
+    y = y_b;
+    o = std::atan2(y_d, x_d);
+    v = e / T_PLAN;
+    lane = highway.closestIndex(x, y);
+
+    const Lane &closest = highway.lanes[lane];
+    double w = o - closest.o[closest.closestIndex(x, y)];
+    s += e * std::cos(w);
+    d -= e * std::sin(w);
 }
 
-Car::~Car() {
+void Car::toLocalFrame(Waypoints &waypoints) const {
+    double cos_o = std::cos(o);
+    double sin_o = std::sin(o);
+
+    for (int i = 0, n = waypoints.size(); i < n; ++i) {
+        double &x_i = waypoints.x[i];
+        double &y_i = waypoints.y[i];
+
+        double x_s = x_i - x;
+        double y_s = y_i - y;
+
+        x_i = x_s * cos_o + y_s * sin_o;
+        y_i = y_s * cos_o - x_s * sin_o;
+    }
 }
 
-void Car::set_frenet_pos(double pos_s, double pos_d) {
-  _pos_s = pos_s;
-  _pos_d = pos_d;
-}
+void Car::toGlobalFrame(Waypoints &waypoints) const {
+    double cos_o = std::cos(o);
+    double sin_o = std::sin(o);
 
-void Car::set_frenet_motion(double vel_s, double acc_s, double vel_d, double acc_d) {
-  _vel_s = vel_s;
-  _acc_s = acc_s;
-  _vel_d = vel_d;
-  _acc_d = acc_d;
-}
+    for (int i = 0, n = waypoints.size(); i < n; ++i) {
+        double &x_i = waypoints.x[i];
+        double &y_i = waypoints.y[i];
 
-vector<double> Car::get_s() const {
-  return {_pos_s, _vel_s, _acc_s};
-}
+        double x_r = x_i * cos_o - y_i * sin_o;
+        double y_r = y_i * cos_o + x_i * sin_o;
 
-vector<double> Car::get_d() const {
-  return {_pos_d, _vel_d, _acc_d};
-}
-
-// returns frenet coordinates of predicted position at time t
-// simplified assumption in line with project constraints
-// - vehicle stays in lane
-// - vehicle has constant speed
-vector<double> Car::state_at(double t) const {
-  double new_s = _pos_s + t * _vel_s;
-  return {new_s, _pos_d};
+        x_i = x + x_r;
+        y_i = y + y_r;
+    }
 }
