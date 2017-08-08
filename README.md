@@ -74,9 +74,13 @@ And sending back a new sequence of waypoints describing the updated path plan. T
 
 ### FSM
 
-The FSM starts at the START state, which determines the initial lane and the switches into the CRUISING state. In this state the car moves at the reference speed of 20m/s (close to 44MPH); it also tries to keep the car on the middle lane, from where it can more easily move to avoid slower cars. If it finds a slower car ahead, it initially switches to the TAILING state where it will try to pair its speed to them, while watching for an opportunity to change lanes. When this comes the FSM selects a destination lane and switches to CHANGING_LANES state, returning to CRUISING state once the movement is complete.
+The system has the following states: 
 
-Once the current behavior (composed of a reference speed v and a polynomial route roughly indicating whether to keep or change lanes) is determined, it's dispatched along the current State to the PathPlanner. It in turn uses the CppAD interface to Ipopt to compute a sequence of waypoints approaching the route at the reference speed, while respecting acceleration limits.
+- `START` state, which determines the initial lane and the switches into the CRUISING state. In this state the car moves at the reference speed of 20m/s (close to 44MPH); it also tries to keep the car on the middle lane, from where it can easily move to avoid slower cars. If it finds a slower car ahead, it initially switches to the TAILING state.
+
+- `TAILING` state where it will try to pair its speed to the cars, while watching for an opportunity to change lanes. When this comes the FSM selects a destination lane and switches to `CHANGING_LANES` state, returning to `CRUISING` state once the movement is complete.
+
+Once the current behavior (composed of a reference speed `v` and a polynomial route roughly indicating whether to keep or change lanes) is determined, it's dispatched along the current State to the `PathPlanner`. It in turn uses the `CppAD` interface to `Ipopt` to compute a sequence of waypoints approaching the route at the reference speed, while respecting acceleration limits.
 
   
 ### Simulator
